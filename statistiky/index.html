@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="cs" class="bg-base-200">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ez Gamble w/ F</title>
+  </head>
+  <body>
+    <header
+      class="navbar sticky top-0 bg-base-100 justify-center shadow-sm z-50"
+    >
+      <a href="#" class="btn btn-primary text-xl">Ez Gamble w/ F</a>
+    </header>
+
+    <main
+      class="container max-w-xl mx-auto px-4 py-8 flex flex-col gap-8 min-h-dvh"
+    >
+      <!-- Alert-->
+      <div x-data="alert('beta')" role="alert" class="alert" :class="classes">
+        <template x-if="showIcon">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-6 w-6 shrink-0 stroke-current"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+            />
+          </svg>
+        </template>
+
+        <p>
+          <template x-if="title">
+            <strong x-text="title"></strong>
+          </template>
+
+          <span x-text="message"></span>
+
+          <template x-if="showVersion">
+            <span class="ml-1">
+              Aktuální verze:
+              <strong x-text="$store.data.version"></strong>
+            </span>
+          </template>
+        </p>
+      </div>
+
+      <!-- Kompletní historie dluhů -->
+      <section x-init="$store.data.loadData()" class="flex flex-col gap-8">
+        <article class="card card-border border-base-content/5 bg-base-100">
+          <div class="card-body">
+            <h2 class="card-title text-4xl mb-4">Statistiky</h2>
+
+            <ul class="space-y-4">
+              <template
+                x-for="(debt, index) in $store.data.getDebtHistory()"
+                :key="index"
+              >
+                <li>
+                  <div class="text-lg">
+                    <span
+                      x-text="$store.data.players[debt.from]?.name"
+                      class="text-error"
+                    ></span>
+                    →
+                    <span
+                      x-text="$store.data.players[debt.to]?.name"
+                      class="text-success"
+                    ></span>
+                  </div>
+
+                  <div class="flex justify-between">
+                    <span> <span x-text="debt.amount"></span> Kč</span>
+
+                    <span class="text-base-content/60 text-xs">
+                      přidáno
+                      <time x-show="debt.created" class="text-base-content/60">
+                        <span
+                          x-text="$store.data.formatCZ(debt.created)"
+                        ></span>
+                      </time>
+                    </span>
+                  </div>
+                </li>
+              </template>
+            </ul>
+
+            <!-- fallback -->
+            <template x-if="$store.data.debts.length === 0">
+              <p class="italic">Žádná historie dluhů</p>
+            </template>
+          </div>
+        </article>
+        <article class="card">
+          <div class="card-body text-xs">
+            <p>
+              Účast na hazardní hře může být škodlivá. Ministerstvo financí
+              varuje: Účastí na hazardní hře může vzniknout závislost!
+              Hazardních her se nemohou účastnit osoby mladší 18 let.
+            </p>
+          </div>
+        </article>
+      </section>
+    </main>
+    <footer
+      class="footer sm:footer-horizontal bg-base-100 text-base-content items-center p-4 grid-flow-row gap-4 place-items-center"
+    >
+      <nav class="grid-flow-col">
+        <a
+          target="_blank"
+          href="https://discord.com/channels/1060029352886145024/1455031128346988625"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 256 256"
+            class="fill-current w-8 h-8"
+          >
+            <path
+              d="M247.51,174.39,218,58a16.08,16.08,0,0,0-13-11.88l-36.06-5.92a16.22,16.22,0,0,0-18.26,11.88l-.21.85a4,4,0,0,0,3.27,4.93,155.62,155.62,0,0,1,24.41,5.62,8.2,8.2,0,0,1,5.62,9.7,8,8,0,0,1-10.19,5.64,155.4,155.4,0,0,0-90.8-.1,8.22,8.22,0,0,1-10.28-4.81,8,8,0,0,1,5.08-10.33,156.85,156.85,0,0,1,24.72-5.72,4,4,0,0,0,3.27-4.93l-.21-.85A16.21,16.21,0,0,0,87.08,40.21L51,46.13A16.08,16.08,0,0,0,38,58L8.49,174.39a15.94,15.94,0,0,0,9.06,18.51l67,29.71a16.17,16.17,0,0,0,21.71-9.1l3.49-9.45a4,4,0,0,0-3.27-5.35,158.13,158.13,0,0,1-28.63-6.2,8.2,8.2,0,0,1-5.61-9.67,8,8,0,0,1,10.2-5.66,155.59,155.59,0,0,0,91.12,0,8,8,0,0,1,10.19,5.65,8.19,8.19,0,0,1-5.61,9.68,157.84,157.84,0,0,1-28.62,6.2,4,4,0,0,0-3.27,5.35l3.49,9.45a16.18,16.18,0,0,0,21.71,9.1l67-29.71A15.94,15.94,0,0,0,247.51,174.39ZM92,152a12,12,0,1,1,12-12A12,12,0,0,1,92,152Zm72,0a12,12,0,1,1,12-12A12,12,0,0,1,164,152Z"
+            ></path>
+          </svg>
+        </a>
+      </nav>
+    </footer>
+    <script type="module" src="/src/js/site.js"></script>
+  </body>
+</html>

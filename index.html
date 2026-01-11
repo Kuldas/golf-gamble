@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="cs" class="bg-base-200">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ez Gamble w/ F</title>
+  </head>
+  <body>
+    <header
+      class="navbar sticky top-0 bg-base-100 justify-center shadow-sm z-50"
+    >
+      <a href="/" class="btn btn-primary text-xl">Ez Gamble w/ F</a>
+    </header>
+
+    <main
+      class="container max-w-xl mx-auto px-4 py-8 flex flex-col gap-8 min-h-dvh"
+    >
+      <!-- Alert-->
+      <div x-data="alert('beta')" role="alert" class="alert" :class="classes">
+        <template x-if="showIcon">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-6 w-6 shrink-0 stroke-current"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+            />
+          </svg>
+        </template>
+
+        <p>
+          <template x-if="title">
+            <strong x-text="title"></strong>
+          </template>
+
+          <span x-text="message"></span>
+
+          <template x-if="showVersion">
+            <span class="ml-1">
+              Aktuální verze:
+              <strong x-text="$store.data.version"></strong>
+            </span>
+          </template>
+        </p>
+      </div>
+
+      <!-- Seznam hráčů -->
+      <section x-init="$store.data.loadData()" class="flex flex-col gap-8">
+        <div class="card card-border border-base-content/5 bg-base-100">
+          <div class="card-body relative">
+            <div class="absolute bottom-6 right-6">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="opacity-5 aspect-square w-20 h-20 md:w-40 md:h-40"
+              >
+                <path d="m12 8 6-3-6-3v10" />
+                <path
+                  d="m8 11.99-5.5 3.14a1 1 0 0 0 0 1.74l8.5 4.86a2 2 0 0 0 2 0l8.5-4.86a1 1 0 0 0 0-1.74L16 12"
+                />
+                <path d="m6.49 12.85 11.02 6.3" />
+                <path d="M17.51 12.85 6.5 19.15" />
+              </svg>
+            </div>
+            <div class="card-actions justify-end">
+              <!-- Button pro přidání dluhu -->
+              <button
+                class="btn btn-sm btn-accent"
+                onclick="debts_modal.showModal()"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  fill="currentColor"
+                  viewBox="0 0 256 256"
+                  class="size-[1.2em]"
+                >
+                  <path
+                    d="M224,128a8,8,0,0,1-8,8H136v80a8,8,0,0,1-16,0V136H40a8,8,0,0,1,0-16h80V40a8,8,0,0,1,16,0v80h80A8,8,0,0,1,224,128Z"
+                  ></path>
+                </svg>
+                Přidat dluh
+              </button>
+              <!-- Button pro opětovné načtení tabulky -->
+              <button
+                @click="$store.data.loadData()"
+                class="btn btn-sm btn-info"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  fill="currentColor"
+                  viewBox="0 0 256 256"
+                  class="size-[1.2em]"
+                >
+                  <path
+                    d="M224,48V96a8,8,0,0,1-8,8H168a8,8,0,0,1,0-16h28.69L182.06,73.37a79.56,79.56,0,0,0-56.13-23.43h-.45A79.52,79.52,0,0,0,69.59,72.71,8,8,0,0,1,58.41,61.27a96,96,0,0,1,135,.79L208,76.69V48a8,8,0,0,1,16,0ZM186.41,183.29a80,80,0,0,1-112.47-.66L59.31,168H88a8,8,0,0,0,0-16H40a8,8,0,0,0-8,8v48a8,8,0,0,0,16,0V179.31l14.63,14.63A95.43,95.43,0,0,0,130,222.06h.53a95.36,95.36,0,0,0,67.07-27.33,8,8,0,0,0-11.18-11.44Z"
+                  ></path>
+                </svg>
+                Obnovit
+              </button>
+            </div>
+
+            <h2 class="card-title text-4xl mb-4">Gembleři</h2>
+
+            <template x-if="$store.data.loading">
+              <div class="flex flex-col items-center p-6">
+                <span class="loading loading-dots loading-md align-self"></span>
+                Načítám data
+              </div>
+            </template>
+
+            <ul class="space-y-4">
+              <template
+                x-for="[id, player] in Object.entries($store.data.players)"
+                :key="id"
+              >
+                <li>
+                  <!-- Jméno hráče -->
+                  <h3 class="font-semibold text-lg" x-text="player.name"></h3>
+
+                  <!-- Dluhy hráče -->
+                  <ul class="list-inside list-disc text-sm">
+                    <template
+                      x-for="debt in $store.data.getDebtsFor(id)"
+                      :key="debt.toId"
+                    >
+                      <li>
+                        <span x-text="debt.toName"></span> →
+                        <span x-text="debt.amount" class="font-bold"></span> Kč
+                      </li>
+                    </template>
+
+                    <!-- Pokud hráč nikomu nic nedluží -->
+                    <template x-if="$store.data.getDebtsFor(id).length === 0">
+                      <li class="text-base-content/60">Žádné dluhy</li>
+                    </template>
+                  </ul>
+                </li>
+              </template>
+            </ul>
+          </div>
+        </div>
+        <div class="card card-border border-base-content/5 bg-base-100">
+          <div class="card-body">
+            <h2 class="card-title text-4xl mb-4">Nejnovější dluhy</h2>
+
+            <ul class="space-y-4">
+              <template
+                x-for="(debt, index) in $store.data.getDebtHistory(5)"
+                :key="index"
+              >
+                <li>
+                  <div class="text-lg">
+                    <span
+                      x-text="$store.data.players[debt.from]?.name"
+                      class="text-error"
+                    ></span>
+                    →
+                    <span
+                      x-text="$store.data.players[debt.to]?.name"
+                      class="text-success"
+                    ></span>
+                  </div>
+
+                  <div class="flex justify-between">
+                    <span> <span x-text="debt.amount"></span> Kč</span>
+
+                    <span class="text-base-content/60 text-xs">
+                      přidáno
+                      <time x-show="debt.created" class="text-base-content/60">
+                        <span
+                          x-text="$store.data.formatCZ(debt.created)"
+                        ></span>
+                      </time>
+                    </span>
+                  </div>
+                </li>
+              </template>
+            </ul>
+
+            <!-- fallback -->
+            <template x-if="$store.data.debts.length === 0">
+              <p class="italic">Žádná historie dluhů</p>
+            </template>
+            <div class="card-actions justify-center">
+              <!-- Button pro opětovné načtení tabulky -->
+              <a href="/historie" class="btn btn-sm btn-ghost">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  fill="currentColor"
+                  viewBox="0 0 256 256"
+                  class="size-[1.2em]"
+                >
+                  <path
+                    d="M136,80v43.47l36.12,21.67a8,8,0,0,1-8.24,13.72l-40-24A8,8,0,0,1,120,128V80a8,8,0,0,1,16,0Zm-8-48A95.44,95.44,0,0,0,60.08,60.15C52.81,67.51,46.35,74.59,40,82V64a8,8,0,0,0-16,0v40a8,8,0,0,0,8,8H72a8,8,0,0,0,0-16H49c7.15-8.42,14.27-16.35,22.39-24.57a80,80,0,1,1,1.66,114.75,8,8,0,1,0-11,11.64A96,96,0,1,0,128,32Z"
+                  ></path>
+                </svg>
+                Kompletní historie
+              </a>
+            </div>
+          </div>
+        </div>
+        <article class="card">
+          <div class="card-body text-xs">
+            <p>
+              Účast na hazardní hře může být škodlivá. Ministerstvo financí
+              varuje: Účastí na hazardní hře může vzniknout závislost!
+              Hazardních her se nemohou účastnit osoby mladší 18 let.
+            </p>
+          </div>
+        </article>
+      </section>
+    </main>
+    <!-- Modal okno pro přidání dluhu -->
+    <dialog
+      id="debts_modal"
+      class="modal modal-bottom sm:modal-middle"
+      x-data="{ winnerId: '', loserId: '', amount: null, success: false }"
+      @close="winnerId = ''; loserId = '', amount = null"
+    >
+      <div class="modal-box flex flex-col gap-4">
+        <form method="dialog">
+          <button
+            class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+          >
+            ✕
+          </button>
+        </form>
+        <!-- Přidání nového dluhu -->
+        <h3 class="text-3xl">Přidat dluh</h3>
+        <!-- Výběr výherce -->
+        <fieldset class="fieldset p-0">
+          <legend class="fieldset-legend text-base">Výherce</legend>
+          <select x-model="winnerId" @change="loserId = ''" class="select">
+            <option value="" disabled selected>Vyber hráče</option>
+            <template
+              x-for="[id, player] in Object.entries($store.data.players)"
+              :key="id"
+            >
+              <option :value="id" x-text="player.name"></option>
+            </template>
+          </select>
+        </fieldset>
+
+        <!-- Výběr poraženého -->
+        <fieldset class="fieldset p-0">
+          <legend class="fieldset-legend text-base">Poražený</legend>
+          <select x-model="loserId" class="select">
+            <option value="" disabled selected>Vyber hráče</option>
+            <template
+              x-for="[id, player] in Object.entries($store.data.players)"
+              :key="id"
+            >
+              <option
+                x-show="id !== winnerId"
+                :value="id"
+                x-text="player.name"
+              ></option>
+            </template>
+          </select>
+        </fieldset>
+
+        <!-- Výběr částky -->
+        <fieldset class="fieldset p-0">
+          <legend class="fieldset-legend text-base">Výše dluhu</legend>
+          <label class="flex items-center gap-2">
+            <input
+              type="radio"
+              name="amount"
+              value="100"
+              x-model.number="amount"
+              class="radio"
+            />
+            100 Kč
+          </label>
+          <label class="flex items-center gap-2">
+            <input
+              type="radio"
+              name="amount"
+              value="50"
+              x-model.number="amount"
+              class="radio"
+            />50 Kč
+          </label>
+        </fieldset>
+
+        <!-- Tlačítko pro přidání dluhu -->
+        <button
+          class="btn btn-accent mt-4"
+          :disabled="!winnerId || !loserId || !amount"
+          @click="
+            $store.data.addDebt(winnerId, loserId, amount).then(() => {
+            success = true;
+            winnerId = '';
+            loserId = '';
+            amount = null;
+            setTimeout(() => success = false, 3000);
+          });
+          "
+        >
+          Přidat dluh
+        </button>
+
+        <!-- Alert: úspěšné přidání dluhu -->
+        <div
+          role="alert"
+          class="alert alert-success alert-soft"
+          x-show="success"
+        >
+          Dluh byl úspěšně přidán!
+        </div>
+        <!-- <div class="modal-action"></div> -->
+      </div>
+      <form method="dialog" class="modal-backdrop">
+        <button>Zavřít</button>
+      </form>
+    </dialog>
+    <footer
+      x-data
+      class="footer sm:footer-horizontal bg-base-100 text-base-content items-center p-4 grid-flow-row gap-4 place-items-center"
+    >
+      <nav class="grid-flow-col">
+        <a
+          target="_blank"
+          href="https://discord.com/channels/1060029352886145024/1455031128346988625"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 256 256"
+            class="fill-current w-8 h-8"
+          >
+            <path
+              d="M247.51,174.39,218,58a16.08,16.08,0,0,0-13-11.88l-36.06-5.92a16.22,16.22,0,0,0-18.26,11.88l-.21.85a4,4,0,0,0,3.27,4.93,155.62,155.62,0,0,1,24.41,5.62,8.2,8.2,0,0,1,5.62,9.7,8,8,0,0,1-10.19,5.64,155.4,155.4,0,0,0-90.8-.1,8.22,8.22,0,0,1-10.28-4.81,8,8,0,0,1,5.08-10.33,156.85,156.85,0,0,1,24.72-5.72,4,4,0,0,0,3.27-4.93l-.21-.85A16.21,16.21,0,0,0,87.08,40.21L51,46.13A16.08,16.08,0,0,0,38,58L8.49,174.39a15.94,15.94,0,0,0,9.06,18.51l67,29.71a16.17,16.17,0,0,0,21.71-9.1l3.49-9.45a4,4,0,0,0-3.27-5.35,158.13,158.13,0,0,1-28.63-6.2,8.2,8.2,0,0,1-5.61-9.67,8,8,0,0,1,10.2-5.66,155.59,155.59,0,0,0,91.12,0,8,8,0,0,1,10.19,5.65,8.19,8.19,0,0,1-5.61,9.68,157.84,157.84,0,0,1-28.62,6.2,4,4,0,0,0-3.27,5.35l3.49,9.45a16.18,16.18,0,0,0,21.71,9.1l67-29.71A15.94,15.94,0,0,0,247.51,174.39ZM92,152a12,12,0,1,1,12-12A12,12,0,0,1,92,152Zm72,0a12,12,0,1,1,12-12A12,12,0,0,1,164,152Z"
+            ></path>
+          </svg>
+        </a>
+      </nav>
+    </footer>
+    <script type="module" src="/src/js/site.js"></script>
+  </body>
+</html>
