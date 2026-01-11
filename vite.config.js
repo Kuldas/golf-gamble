@@ -5,11 +5,11 @@ import tailwindcss from '@tailwindcss/vite';
 import pkg from './package.json';
 
 export default defineConfig({
-  base: '/',
+  base: './',
   plugins: [
     tailwindcss(), 
     VitePWA({ 
-      registerType: 'autoUpdate',
+      registerType: 'script-defer',
       injectRegister: 'auto',
       manifest: {
         name: 'My Awesome App',
