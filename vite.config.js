@@ -9,8 +9,6 @@ export default defineConfig({
   plugins: [
     tailwindcss(), 
     VitePWA({ 
-      registerType: 'script-defer',
-      injectRegister: 'auto',
       manifest: {
         name: 'My Awesome App',
         short_name: 'MyApp',
