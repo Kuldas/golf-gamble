@@ -3,3 +3,9 @@
     to = "/historie/"
     status = 301
     force = true
+
+[[redirects]]
+    from = "/historie/*"
+    to = "/historie/:splat"
+    status = 301
+    force = true
