@@ -6,6 +6,7 @@ import { supabase, fetchPlayers, fetchDebts } from './database';
 window.Alpine = Alpine;
 document.addEventListener('alpine:init', () => {
   Alpine.store('data', {
+    site_url: import.meta.env.VITE_SITE_URL,
     version: import.meta.env.VITE_APP_VERSION || 'neznámá',
     players: {}, // objekt hráčů
     debts: [], // pole dluhů
@@ -106,3 +107,4 @@ Alpine.start();
 // Debug logy
 console.log('VITE_APP_VERSION', import.meta.env.VITE_APP_VERSION);
 console.log('Store version', Alpine.store('data').version);
+console.log('Store site_url', Alpine.store('data').site_url);
