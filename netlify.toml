@@ -1,0 +1,4 @@
+[[redirects]]
+    from = "/historie"
+    to = "/historie/"
+    status = 301
