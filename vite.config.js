@@ -49,7 +49,6 @@ export default defineConfig({
       },
     },
   },
-  trailingSlash: 'always',
   server: {
     host: 'golf-gamble.test',
     open: true,
