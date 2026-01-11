@@ -5,8 +5,6 @@ import tailwindcss from '@tailwindcss/vite';
 import pkg from './package.json';
 
 export default defineConfig({
-  root: '.',
-  base: '/',
   plugins: [
     tailwindcss(), 
     VitePWA({ 
