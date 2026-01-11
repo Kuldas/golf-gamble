@@ -2,3 +2,4 @@
     from = "/historie"
     to = "/historie/"
     status = 301
+    force = true
