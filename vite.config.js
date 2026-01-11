@@ -5,8 +5,7 @@ import tailwindcss from '@tailwindcss/vite';
 import pkg from './package.json';
 
 export default defineConfig({
-  root: '.',
-  base: './',
+  base: '/',
   plugins: [
     tailwindcss(), 
     VitePWA({ 
@@ -50,6 +49,7 @@ export default defineConfig({
       },
     },
   },
+  trailingSlash: 'always',
   server: {
     host: 'golf-gamble.test',
     open: true,
